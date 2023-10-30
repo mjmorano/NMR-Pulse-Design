@@ -1,0 +1,19 @@
+from numpy import zeros
+
+def rk5 ( dydt, t, dt, y0, gamma, B0, B1):
+
+    y = zeros ([t.size + 1, y0.size])
+    y[0,:] = y0
+
+    for i in range(t.size):
+        
+        k1 = dydt ( gamma, B0[i], B1[i], t[i],               y[i,:] )
+        k2 = dydt ( gamma, B0[i], B1[i], t[i] + dt/5.0,      y[i,:] + dt *   k1/5.0 )
+        k3 = dydt ( gamma, B0[i], B1[i], t[i] + dt*3.0/10.0, y[i,:] + dt * ( k1*3.0 + k2*9.0)/40.0 )
+        k4 = dydt ( gamma, B0[i], B1[i], t[i] + dt*3.0/5.0,  y[i,:] + dt * ( k1*3.0 - k2*9.0 + k3*12)/10.0 )
+        k5 = dydt ( gamma, B0[i], B1[i], t[i] + dt,          y[i,:] + dt * ( -k1*11.0 + k2*135.0 -k3*140.0 + k4*70.0 )/54.0 )
+        k6 = dydt ( gamma, B0[i], B1[i], t[i] + dt*7.0/8.0,  y[i,:] + dt * ( k1*3262.0 + k2*37800.0 + k3*4600.0 + k4*44275.0 + k5*6831.0)/110592.0 )
+
+        y[i+1,:] = y[i,:] + dt * ( k1*37.0/378.0 +  k3*250.0/621.0 + k4*125.0/594.0  + k6*512.0/1771.0 )
+
+    return y[:t.size]
